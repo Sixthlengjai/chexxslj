@@ -30,6 +30,7 @@ const Main = () => {
         fetch('/logout', {
             method: 'POST'
         }).then((res) => {
+            console.log('Return log out')
             if (res.ok) {
                 navigate('/')
             }
@@ -69,6 +70,9 @@ const Main = () => {
                 console.log('Join Room fetch failed')
                 alert(`Join room failed with server status ${res.status}`)
             }
+        }).catch((e) => {
+            console.log('Join room error')
+            console.log(e)
         })
     }
 
@@ -80,7 +84,9 @@ const Main = () => {
     socket.on('resJoinRoom', (status, roomID) => {
         console.log(`ResJoinRoom status = ${status}`)
         if (status) {
-            navigate('/game')
+            navigate('/game', {
+                state: { username: username, roomID: roomID }
+            })
         } else {
             console.log('Join room failed')
         }
@@ -96,15 +102,13 @@ const Main = () => {
                     return
                 }
                 res.json().then((rooms) => {
-                    let html = []
-                    for (var room of rooms) {
-                        html.push(
-                            <div>
-                                <div>{room.roomID}</div>
-                                <button onClick={() => { joinRoom(room.roomID) }}>Join</button>
-                            </div>
-                        )
-                    }
+                    let html = rooms.map(room => (
+                        <div key={room.roomID}>
+                            <div>{room.roomID}</div>
+                            <button onClick={() => { joinRoom(room.roomID) }}>Join</button>
+                        </div>
+                    ));
+                    setRoomsHTML(html)
                     setRoomsHTML(html)
                 })
             })
@@ -115,8 +119,8 @@ const Main = () => {
 
     return (
         <div className="Main">
-            <button onClick={logout}>Log out</button>
-            <button onClick={createRoom}>Create Room</button>
+            <button onClick={() => { logout() }}>Log out</button>
+            <button onClick={() => { createRoom() }}>Create Room</button>
             <div>{roomsHTML}</div>
         </div>
     )

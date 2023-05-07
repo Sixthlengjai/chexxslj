@@ -13,12 +13,12 @@ module.exports = (app) => {
     app.post('/createRoom', (req, res) => {
         if (!req.session.user) {
             console.log('No user exists')
-            return res.status(error.NoUserExists)
+            return res.status(error.NoUserExists).json({})
         }
         var creator = req.session.user
         if (creator.room !== null) {
             console.log('Already in room')
-            return res.status(error.AlreadyInRoom)
+            return res.status(error.AlreadyInRoom).json({})
         }
         var newRoom = room.createRoom(creator)
         return res.status(200).json({ roomID: newRoom.roomID })
@@ -28,15 +28,15 @@ module.exports = (app) => {
     app.post('/joinRoom', (req, res) => {
         if (!req.session.user) {
             console.log('No user exists')
-            return res.status(error.NoUserExists)
+            return res.status(error.NoUserExists).json({})
         }
         if (!req.body) {
             console.log('No body error')
-            return res.status(error.NoBodyError)
+            return res.status(error.NoBodyError).json({})
         }
         if (!req.body.hasOwnProperty('roomID')) {
             console.log('No room exists')
-            return res.status(error.NoRoomExists)
+            return res.status(error.NoRoomExists).json({})
         }
 
         // var jr = room.getRoom(req.query.roomID)
@@ -49,15 +49,15 @@ module.exports = (app) => {
         if (jr === null) {
             console.log(room.rooms)
             console.log('No room exists')
-            return res.status(error.NoRoomExists)
+            return res.status(error.NoRoomExists).json({})
         }
 
         if (!jr.joinRoom(pl)) {
             console.log('Room size exceed')
-            return res.status(error.RoomSizeExceeds)
+            return res.status(error.RoomSizeExceeds).json({})
         }
 
         console.log('Join room success')
-        return res.status(200)
+        return res.status(200).json({})
     })
 }

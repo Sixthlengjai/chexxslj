@@ -34,7 +34,7 @@ module.exports = (app) => {
                     console.log(`Created new user ${data['username']}`)
                     newUser.print()
                     req.session.user = newUser
-                    return res.status(200).send({
+                    return res.status(200).json({
                         username: newUser.username,
                         status: newUser.status
                     })
@@ -69,12 +69,13 @@ module.exports = (app) => {
 
             console.log(`Username ${data['username']} not found`)
 
-            return res.status(400)
+            return res.status(400).json({})
         })
     })
 
     app.post('/logout', (req, res) => {
+        console.log('Logout request received')
         req.session.destroy()
-        res.status(200)
+        return res.status(200).json({})
     })
 }

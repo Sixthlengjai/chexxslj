@@ -10,16 +10,17 @@ module.exports = (io) => {
             var pl = user.findUserByName(username)
             if (pl === null) {
                 console.log('No player found')
-                return
+                console.log('[Socket]: Join Room failed')
+                return socket.emit('resJoinRoom', false, roomID)
             }
             if (rm === null) {
-                console.log(`No room with id ${roomID} exists`)
-                return
+                console.log('[Socket]: Join Room failed')
+                return socket.emit('resJoinRoom', false, roomID)
             }
             pl.room = roomID
-            var status = rm.joinRoom(pl)
             socket.join(roomID)
-            socket.emit('resJoinRoom', status, roomID)
+            console.log(`[Socket]: Join Room success`)
+            socket.emit('resJoinRoom', true, roomID)
         })
 
         socket.on('pingGame', (roomID, username) => {
